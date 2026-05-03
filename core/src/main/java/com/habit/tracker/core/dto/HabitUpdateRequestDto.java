@@ -4,8 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record HabitUpdateRequestDto(
-        @NotNull(message = "habit id cannot be null")
-        Long id,
+        @NotNull(message = "Name of habit is required")
         String name,
         @Min(value = 0, message = "Points must be at least 0")
         Integer points,

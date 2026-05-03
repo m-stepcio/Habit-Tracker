@@ -1,0 +1,32 @@
+server:
+  port: 8080
+spring:
+  security:
+    oauth2:
+      resourceServer:
+        jwt:
+          issuer-uri: http://localhost:8200/realms/habit-tracker
+          jwk-set-uri: http://localhost:8200/realms/habit-tracker/protocol/openid-connect/certs
+  datasource:
+    url: jdbc:postgresql://localhost:5432/habittrackerdb
+    driver-class-name: org.postgresql.Driver
+    username: habittracker
+    password: passhabit
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+keycloak:
+  client-id: habit-tracker-client
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html
+    operations-sorter: method
+    disable-swagger-default-url: true
+properties:
+  start-points: 300
+  days-back-editable: 7

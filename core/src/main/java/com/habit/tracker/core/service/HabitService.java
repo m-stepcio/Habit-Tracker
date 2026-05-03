@@ -97,10 +97,10 @@ public class HabitService {
         }
     }
 
-    public void updateHabit(String userId, HabitUpdateRequestDto habitUpdateRequestDto) {
-        HabitEntity updatedHabit = this.habitRepository.findByIdAndUserId(habitUpdateRequestDto.id(), userId)
-                .orElseThrow(() -> new HabitNotFoundException(habitUpdateRequestDto.id()));
-        logger.info("Start update operation. Updating habit {} with new values {}", updatedHabit, habitUpdateRequestDto);
+    public void updateHabit(String userId, long habitId, HabitUpdateRequestDto habitUpdateRequestDto) {
+        HabitEntity updatedHabit = this.habitRepository.findByIdAndUserId(habitId, userId)
+                .orElseThrow(() -> new HabitNotFoundException(habitId));
+        logger.info("Start update operation. Updating habit {} with new values {}", updatedHabit, habitId);
         if (updatedHabit.getStatus().equals(HabitStatus.INACTIVE)) {
             updatedHabit = this.setNewValues(updatedHabit, habitUpdateRequestDto);
             this.habitRepository.save(updatedHabit);
