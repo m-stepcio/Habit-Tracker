@@ -80,7 +80,7 @@ public class HabitService {
         return toDo;
     }
 
-    public void saveUserHabit(String userId, HabitDto newHabitDto) throws HabitAlreadyExistException {
+    public long saveUserHabit(String userId, HabitDto newHabitDto) throws HabitAlreadyExistException {
         List<HabitEntity> habitEntities = this.habitRepository.findByUserIdAndName(userId, newHabitDto.name());
         logger.info("Checking is habit already in database");
         if (habitEntities.isEmpty()) {
@@ -89,8 +89,9 @@ public class HabitService {
             newHabitEntity.setStatus(HabitStatus.INACTIVE);
             newHabitEntity.setCreationDate(LocalDate.now());
             newHabitEntity.setUserId(userId);
-            this.habitRepository.save(newHabitEntity);
+            long id = this.habitRepository.save(newHabitEntity);
             logger.info("Successful creating new habit");
+            return id;
         } else {
             throw new HabitAlreadyExistException("Habit with name " + newHabitDto.name()
                     + " already exist for user " + userId);
@@ -129,6 +130,8 @@ public class HabitService {
                 logger.error("Habit {} was already purchased by user {}", habitId, userId);
                 throw new HabitAlreadyBoughtException("This habit is already active");
             }
+        } else {
+            throw new
         }
     }
 

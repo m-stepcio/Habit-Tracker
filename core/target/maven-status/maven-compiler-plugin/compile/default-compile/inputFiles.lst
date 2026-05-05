@@ -24,6 +24,7 @@
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/enums/ExecutionDayOption.java
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/enums/ExecutionState.java
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/enums/HabitStatus.java
+/Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/exceptions/CantBuBabitException.java
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/exceptions/ExecutionHistoryNotFoundException.java
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/exceptions/HabitAlreadyBoughtException.java
 /Users/m-stepien/IdeaProjects/Habit-Tracker/core/src/main/java/com/habit/tracker/core/exceptions/HabitAlreadyExistException.java

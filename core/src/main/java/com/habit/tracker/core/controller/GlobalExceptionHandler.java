@@ -1,9 +1,12 @@
 package com.habit.tracker.core.controller;
 
+import com.habit.tracker.core.exceptions.HabitAlreadyBoughtException;
 import com.habit.tracker.core.exceptions.HabitNotFoundException;
 import com.habit.tracker.core.exceptions.IncorrectDateException;
 import com.habit.tracker.core.exceptions.HabitAlreadyExistException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,16 +39,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleHabitNotFoundException(HabitNotFoundException exception){
         Map<String, Object> response = new HashMap<>();
         response.put("Message", exception.getMessage());
-        response.put("Error", "Data not found");
+        response.put("Error", "Resource not found");
         return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(HabitAlreadyExistException.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(HabitAlreadyExistException exception) {
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "Data already exist");
+        response.put("error", "Resource already exist");
         response.put("message", exception.getMessage());
-        return ResponseEntity.internalServerError().body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(HabitAlreadyBoughtException.class)
+    public ResponseEntity<Map<String, Object>> handleHabitAlreadyExistException(Exception exception) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("error", "Habit already bought exception");
+        response.put("message", exception.getMessage());
+        response.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -64,5 +77,6 @@ public class GlobalExceptionHandler {
         response.put("timestamp", LocalDateTime.now());
         return ResponseEntity.internalServerError().body(response);
     }
+
 }
 

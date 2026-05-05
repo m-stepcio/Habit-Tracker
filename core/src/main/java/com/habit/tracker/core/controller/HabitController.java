@@ -7,22 +7,27 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Objects.isNull;
 
 @RestController
-@RequestMapping("/habit")
+@RequestMapping("/me/habits")
 public class HabitController {
     private final HabitService habitService;
     private final HabitMapper habitMapper;
     private static final Logger logger = LoggerFactory.getLogger(HabitController.class);
+    @Value("${app.api-endpoint}")
+    private String apiEndpoint;
+    private final String GET_HABIT = "/me/habits";
 
     @Autowired
     HabitController(HabitService habitService, HabitMapper habitMapper){
@@ -37,7 +42,7 @@ public class HabitController {
         List<HabitDto> habitDtoList;
         if(isNull(date)){
             logger.info("Start get all habit of user {}", userId);
-             habitDtoList = this.habitService.getUserHabits(userId);
+            habitDtoList = this.habitService.getUserHabits(userId);
         } else {
             logger.info("Get habits to do in day {} for user {}", date, userId);
             habitDtoList = this.habitService.getUserHabitToExecuteInDay(userId, date);
@@ -56,21 +61,25 @@ public class HabitController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> saveHabit(@AuthenticationPrincipal Jwt jwt,
-                                          @Valid @RequestBody HabitCreateRequestDto habitDto){
+    public ResponseEntity<Void> createHabit(@AuthenticationPrincipal Jwt jwt,
+                                            @Valid @RequestBody HabitCreateRequestDto habitDto){
+
         String userId = jwt.getClaimAsString("sub");
         logger.info("Add habit for user {}", userId);
-        this.habitService.saveUserHabit(userId, habitMapper.toHabitDto(habitDto));
-        return ResponseEntity.noContent().build();
+        long habitId = this.habitService.saveUserHabit(userId, habitMapper.toHabitDto(habitDto));
+        return ResponseEntity.created(URI
+                .create(String
+                        .join( "/", (CharSequence) List.of(apiEndpoint, GET_HABIT,
+                                habitId)))).build();
     }
 
-    @PostMapping("/execution/day")
+    @PostMapping("{habitId}/execution-days")
     public ResponseEntity<Void> addExecutionDays(@AuthenticationPrincipal Jwt jwt,
                                                  @RequestBody ExecutionDayRequestDto executionDayRequest){
         String userid = jwt.getClaimAsString("sub");
         logger.info("Add execution days user {}", userid);
         this.habitService.setHabitExecutionDays(userid, executionDayRequest.habitId(), executionDayRequest.executionDayList());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/activate")
