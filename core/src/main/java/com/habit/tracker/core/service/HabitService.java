@@ -7,6 +7,7 @@ import com.habit.tracker.core.entity.ExecutionDaysEntity;
 import com.habit.tracker.core.entity.HabitEntity;
 import com.habit.tracker.core.enums.ExecutionDayOption;
 import com.habit.tracker.core.enums.HabitStatus;
+import com.habit.tracker.core.exceptions.CantBuyHabitException;
 import com.habit.tracker.core.exceptions.HabitAlreadyBoughtException;
 import com.habit.tracker.core.exceptions.HabitNotFoundException;
 import com.habit.tracker.core.mapper.HabitMapper;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +91,7 @@ public class HabitService {
             newHabitEntity.setStatus(HabitStatus.INACTIVE);
             newHabitEntity.setCreationDate(LocalDate.now());
             newHabitEntity.setUserId(userId);
-            long id = this.habitRepository.save(newHabitEntity);
+            long id = this.habitRepository.save(newHabitEntity).getId();
             logger.info("Successful creating new habit");
             return id;
         } else {
@@ -131,7 +133,7 @@ public class HabitService {
                 throw new HabitAlreadyBoughtException("This habit is already active");
             }
         } else {
-            throw new
+            throw new CantBuyHabitException("You currently do not have enought point to buy this habit");
         }
     }
 
@@ -149,6 +151,7 @@ public class HabitService {
             logger.info("Successful deleting habit {} by user {}", habitId, userId);
         } else {
             logger.error("User {} does not own habit {}", userId, habitId);
+            throw new AccessDeniedException("User " +userId + " does not own habit " + habitId);
         }
     }
 

@@ -73,7 +73,7 @@ public class HabitController {
                                 habitId)))).build();
     }
 
-    @PostMapping("{habitId}/execution-days")
+    @PostMapping("execution-days")
     public ResponseEntity<Void> addExecutionDays(@AuthenticationPrincipal Jwt jwt,
                                                  @RequestBody ExecutionDayRequestDto executionDayRequest){
         String userid = jwt.getClaimAsString("sub");
