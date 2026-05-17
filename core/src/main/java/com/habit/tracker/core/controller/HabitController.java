@@ -25,7 +25,7 @@ public class HabitController {
     private final HabitService habitService;
     private final HabitMapper habitMapper;
     private static final Logger logger = LoggerFactory.getLogger(HabitController.class);
-    @Value("${app.api-endpoint}")
+    @Value("${properties.api-endpoint}")
     private String apiEndpoint;
     private final String GET_HABIT = "/me/habits";
 
@@ -67,10 +67,12 @@ public class HabitController {
         String userId = jwt.getClaimAsString("sub");
         logger.info("Add habit for user {}", userId);
         long habitId = this.habitService.saveUserHabit(userId, habitMapper.toHabitDto(habitDto));
-        return ResponseEntity.created(URI
+        return ResponseEntity
+                .created(URI
                 .create(String
-                        .join( "/", (CharSequence) List.of(apiEndpoint, GET_HABIT,
-                                habitId)))).build();
+                        .join( "/", apiEndpoint, GET_HABIT, String.valueOf(habitId)))
+                )
+                .build();
     }
 
     @PostMapping("execution-days")

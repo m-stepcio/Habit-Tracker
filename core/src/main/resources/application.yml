@@ -31,3 +31,7 @@ properties:
   start-points: 300
   days-back-editable: 7
   api-endpoint: http://localhost:8080
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
